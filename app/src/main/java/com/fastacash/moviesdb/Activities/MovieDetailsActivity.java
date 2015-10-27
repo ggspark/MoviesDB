@@ -112,6 +112,7 @@ public class MovieDetailsActivity extends BaseActivity {
                 Intent intent = new Intent(MovieDetailsActivity.this, MovieDetailsActivity.class);
                 intent.putExtra(Constant.MOVIE, gson.toJson(dataset.get(position)));
                 startActivity(intent);
+                finish();
             }
         });
     }
