@@ -28,6 +28,7 @@ import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmObject;
+import io.realm.RealmResults;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -70,11 +71,15 @@ public class MovieDetailsActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 Realm realm = Realm.getInstance(MovieDetailsActivity.this);
-                realm.beginTransaction();
-                realm.copyToRealm(movie);
-                realm.commitTransaction();
-
-                Toast.makeText(MovieDetailsActivity.this, "Movie added to Favourites", Toast.LENGTH_SHORT).show();
+                RealmResults<Result> results = realm.where(Result.class).equalTo("id", movie.getId()).findAll();
+                if(results.isEmpty()) {
+                    realm.beginTransaction();
+                    realm.copyToRealm(movie);
+                    realm.commitTransaction();
+                    Toast.makeText(MovieDetailsActivity.this, "Movie added to Favourites", Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(MovieDetailsActivity.this, "Movie already in Favourites", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
