@@ -18,7 +18,7 @@ public class Result {
     private Boolean adult;
     @SerializedName("backdrop_path")
     @Expose
-    private Object backdropPath;
+    private String backdropPath;
     @SerializedName("genre_ids")
     @Expose
     private List<Integer> genreIds = new ArrayList<Integer>();
@@ -33,7 +33,7 @@ public class Result {
     private String originalTitle;
     @SerializedName("overview")
     @Expose
-    private Object overview;
+    private String overview;
     @SerializedName("release_date")
     @Expose
     private String releaseDate;
@@ -73,14 +73,14 @@ public class Result {
     /**
      * @return The backdropPath
      */
-    public Object getBackdropPath() {
+    public String getBackdropPath() {
         return backdropPath;
     }
 
     /**
      * @param backdropPath The backdrop_path
      */
-    public void setBackdropPath(Object backdropPath) {
+    public void setBackdropPath(String backdropPath) {
         this.backdropPath = backdropPath;
     }
 
@@ -143,14 +143,14 @@ public class Result {
     /**
      * @return The overview
      */
-    public Object getOverview() {
+    public String getOverview() {
         return overview;
     }
 
     /**
      * @param overview The overview
      */
-    public void setOverview(Object overview) {
+    public void setOverview(String overview) {
         this.overview = overview;
     }
 

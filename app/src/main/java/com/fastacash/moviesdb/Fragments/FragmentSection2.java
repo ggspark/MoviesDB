@@ -14,7 +14,9 @@ import android.widget.GridView;
 
 import com.fastacash.moviesdb.Activities.MovieListingActivity;
 import com.fastacash.moviesdb.Adapters.MovieAdapter;
+import com.fastacash.moviesdb.DataSingleton;
 import com.fastacash.moviesdb.R;
+import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
 
 
 public class FragmentSection2 extends BaseFragment {
@@ -33,8 +35,13 @@ public class FragmentSection2 extends BaseFragment {
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_section_1, container, false);
         fillUi(rootView);
-        movieAdapter = new MovieAdapter(getActivity());
-        gridView.setAdapter(movieAdapter);
+        movieAdapter = new MovieAdapter(getActivity(), DataSingleton.getInstance().getNowPlayingMovies());
+        SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(movieAdapter);
+        swingBottomInAnimationAdapter.setAbsListView(gridView);
+
+        assert swingBottomInAnimationAdapter.getViewAnimator() != null;
+        swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(300);
+        gridView.setAdapter(swingBottomInAnimationAdapter);
 
         return rootView;
     }
@@ -65,5 +72,11 @@ public class FragmentSection2 extends BaseFragment {
 
             }
         });
+    }
+
+    public void notifyDataSetChanged() {
+        if (movieAdapter != null) {
+            movieAdapter.notifyDataSetChanged();
+        }
     }
 }

@@ -11,5 +11,8 @@ public class Constant {
     //API
     public static final String API_KEY = "48f74abe41cd15ffe1005ef370f7343b";
 
+    //Intent
+    public static final String MOVIE = "movie";
+
 }
 

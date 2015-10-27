@@ -33,7 +33,18 @@ public class MovieListingActivity extends BaseActivity implements ActionBar.TabL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_listing);
-        fillUi();
+
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
+        swipeRefreshLayout.setColorSchemeColors(
+                R.color.accent, R.color.primary,
+                R.color.primary_dark);
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                queryServer();
+            }
+        });
 
         // Create the adapter that will return a fragment for each of the three primary sections
         // of the app.
@@ -79,21 +90,6 @@ public class MovieListingActivity extends BaseActivity implements ActionBar.TabL
     @Override
     protected void onStart() {
         super.onStart();
-    }
-
-    private void fillUi() {
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
-        swipeRefreshLayout.setColorSchemeColors(
-                R.color.accent, R.color.primary,
-                R.color.primary_dark);
-
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                queryServer();
-            }
-        });
-
     }
 
     synchronized void queryServer() {

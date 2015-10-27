@@ -20,5 +20,7 @@
 
 
     <color name="color_grid_view_bg">@color/divider</color>
-
+    <color name="color_movie_bg">@color/primary</color>
+    <color name="color_title_text">@color/primary_light</color>
+    <color name="color_desc_text">@color/primary_text</color>
 </resources>

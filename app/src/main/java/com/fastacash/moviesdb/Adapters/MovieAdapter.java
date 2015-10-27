@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
-import com.fastacash.moviesdb.DataSingleton;
 import com.fastacash.moviesdb.R;
 import com.fastacash.moviesdb.models.Result;
 import com.fastacash.moviesdb.utils.Constant;
@@ -25,8 +24,8 @@ public class MovieAdapter extends BaseAdapter {
     private LayoutInflater inflater;
     private List<Result> dataset;
 
-    public MovieAdapter(Context context) {
-        dataset = DataSingleton.getInstance().getNowPlayingMovies();
+    public MovieAdapter(Context context, List<Result> dataset) {
+        this.dataset = dataset;
         this.context = context;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
