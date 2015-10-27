@@ -15,13 +15,18 @@ import com.fastacash.moviesdb.controller.APIServices;
 import com.fastacash.moviesdb.models.Movie;
 import com.fastacash.moviesdb.models.Result;
 import com.fastacash.moviesdb.utils.Constant;
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import io.realm.Realm;
+import io.realm.RealmObject;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -31,6 +36,19 @@ public class MovieDetailsActivity extends BaseActivity {
     private GridView gridView;
     private MovieAdapter movieAdapter;
     private List<Result> dataset;
+    private static Gson gson = new GsonBuilder()
+            .setExclusionStrategies(new ExclusionStrategy() {
+                @Override
+                public boolean shouldSkipField(FieldAttributes f) {
+                    return f.getDeclaringClass().equals(RealmObject.class);
+                }
+
+                @Override
+                public boolean shouldSkipClass(Class<?> clazz) {
+                    return false;
+                }
+            })
+            .create();
 
 
     @Override
@@ -38,13 +56,24 @@ public class MovieDetailsActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_details);
         String res = getIntent().getStringExtra(Constant.MOVIE);
-        Result movie = (new Gson()).fromJson(res, Result.class);
+        final Result movie = gson.fromJson(res, Result.class);
 
         ImageView backdrop = (ImageView) findViewById(R.id.backdrop);
         ImageView poster = (ImageView) findViewById(R.id.poster);
         TextView title = (TextView) findViewById(R.id.title);
         TextView overview = (TextView) findViewById(R.id.overview);
         overview.setMovementMethod(new ScrollingMovementMethod());
+        View fab = findViewById(R.id.fav_btn);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Realm realm = Realm.getInstance(MovieDetailsActivity.this);
+                realm.beginTransaction();
+                realm.copyToRealm(movie);
+                realm.commitTransaction();
+            }
+        });
 
 
         ImageLoader.getInstance().displayImage("http://image.tmdb.org/t/p/w500/" + movie.getBackdropPath() + "?api_key=" + Constant.API_KEY, backdrop);
@@ -73,7 +102,7 @@ public class MovieDetailsActivity extends BaseActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(MovieDetailsActivity.this, MovieDetailsActivity.class);
-                intent.putExtra(Constant.MOVIE, (new Gson()).toJson(dataset.get(position)));
+                intent.putExtra(Constant.MOVIE, gson.toJson(dataset.get(position)));
                 startActivity(intent);
             }
         });

@@ -6,12 +6,15 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.realm.RealmObject;
+import io.realm.annotations.Ignore;
+
 /**
  * @author Gaurav Gupta <gaurav@thegauravgupta.com>
  * @since 27/Oct/2015
  */
 
-public class Result {
+public class Result extends RealmObject {
 
     @SerializedName("adult")
     @Expose
@@ -21,6 +24,7 @@ public class Result {
     private String backdropPath;
     @SerializedName("genre_ids")
     @Expose
+    @Ignore
     private List<Integer> genreIds = new ArrayList<Integer>();
     @SerializedName("id")
     @Expose
@@ -55,6 +59,26 @@ public class Result {
     @SerializedName("vote_count")
     @Expose
     private Integer voteCount;
+
+    public Result() {
+    }
+
+    public Result(Result result) {
+        this.adult = result.getAdult();
+        this.backdropPath = result.getBackdropPath();
+        this.genreIds = result.getGenreIds();
+        this.id = result.getId();
+        this.originalLanguage = result.getOriginalLanguage();
+        this.originalTitle = result.getOriginalTitle();
+        this.overview = result.getOverview();
+        this.releaseDate = result.getReleaseDate();
+        this.posterPath = result.getPosterPath();
+        this.popularity = result.getPopularity();
+        this.title = result.getTitle();
+        this.video = result.getVideo();
+        this.voteAverage = result.getVoteAverage();
+        this.voteCount = result.getVoteCount();
+    }
 
     /**
      * @return The adult

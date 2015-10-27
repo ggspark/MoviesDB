@@ -16,14 +16,19 @@ import android.widget.GridView;
 import com.fastacash.moviesdb.Activities.MovieDetailsActivity;
 import com.fastacash.moviesdb.Activities.MovieListingActivity;
 import com.fastacash.moviesdb.Adapters.MovieAdapter;
-import com.fastacash.moviesdb.DataSingleton;
 import com.fastacash.moviesdb.R;
 import com.fastacash.moviesdb.models.Result;
 import com.fastacash.moviesdb.utils.Constant;
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
 
 import java.util.List;
+
+import io.realm.Realm;
+import io.realm.RealmObject;
 
 
 public class FragmentSection2 extends BaseFragment {
@@ -34,6 +39,20 @@ public class FragmentSection2 extends BaseFragment {
     private MovieAdapter movieAdapter;
 
     private List<Result> dataset;
+    private static Gson gson = new GsonBuilder()
+            .setExclusionStrategies(new ExclusionStrategy() {
+                @Override
+                public boolean shouldSkipField(FieldAttributes f) {
+                    return f.getDeclaringClass().equals(RealmObject.class);
+                }
+
+                @Override
+                public boolean shouldSkipClass(Class<?> clazz) {
+                    return false;
+                }
+            })
+            .create();
+
 
     public static FragmentSection2 getInstance() {
         return instance;
@@ -44,7 +63,8 @@ public class FragmentSection2 extends BaseFragment {
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_section_1, container, false);
         fillUi(rootView);
-        dataset = DataSingleton.getInstance().getNowPlayingMovies();
+        Realm realm = Realm.getInstance(this.getActivity());
+        dataset = realm.allObjects(Result.class);
         movieAdapter = new MovieAdapter(getActivity(), dataset);
         SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(movieAdapter);
         swingBottomInAnimationAdapter.setAbsListView(gridView);
@@ -59,6 +79,8 @@ public class FragmentSection2 extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+        Realm realm = Realm.getInstance(this.getActivity());
+        dataset = realm.where(Result.class).findAll();
         notifyDataSetChanged();
     }
 
@@ -86,7 +108,7 @@ public class FragmentSection2 extends BaseFragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getActivity(), MovieDetailsActivity.class);
-                intent.putExtra(Constant.MOVIE, (new Gson()).toJson(dataset.get(position)));
+                intent.putExtra(Constant.MOVIE, gson.toJson(new Result(dataset.get(position))));
                 startActivity(intent);
             }
         });

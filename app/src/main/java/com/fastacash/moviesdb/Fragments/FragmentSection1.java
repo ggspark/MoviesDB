@@ -20,10 +20,15 @@ import com.fastacash.moviesdb.DataSingleton;
 import com.fastacash.moviesdb.R;
 import com.fastacash.moviesdb.models.Result;
 import com.fastacash.moviesdb.utils.Constant;
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
 
 import java.util.List;
+
+import io.realm.RealmObject;
 
 
 public class FragmentSection1 extends BaseFragment {
@@ -34,6 +39,20 @@ public class FragmentSection1 extends BaseFragment {
     private MovieAdapter movieAdapter;
 
     private List<Result> dataset;
+    private static Gson gson = new GsonBuilder()
+            .setExclusionStrategies(new ExclusionStrategy() {
+                @Override
+                public boolean shouldSkipField(FieldAttributes f) {
+                    return f.getDeclaringClass().equals(RealmObject.class);
+                }
+
+                @Override
+                public boolean shouldSkipClass(Class<?> clazz) {
+                    return false;
+                }
+            })
+            .create();
+
 
     public static FragmentSection1 getInstance() {
         return instance;
@@ -80,7 +99,7 @@ public class FragmentSection1 extends BaseFragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getActivity(), MovieDetailsActivity.class);
-                intent.putExtra(Constant.MOVIE, (new Gson()).toJson(dataset.get(position)));
+                intent.putExtra(Constant.MOVIE, gson.toJson(dataset.get(position)));
                 startActivity(intent);
             }
         });
