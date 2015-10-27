@@ -22,8 +22,8 @@ public class Application extends android.app.Application {
 
         DisplayImageOptions options = new DisplayImageOptions.Builder()
                 .showImageOnLoading(R.drawable.ic_cloud_download_black_48dp)
-                .showImageForEmptyUri(R.drawable.ic_camera_alt_black_48dp)
-                .showImageOnFail(R.drawable.ic_error_outline_black_48dp)
+                .showImageForEmptyUri(R.color.white)
+                .showImageOnFail(R.color.white)
                 .cacheInMemory(true)
                 .cacheOnDisk(true)
                 .considerExifParams(true)
@@ -32,7 +32,7 @@ public class Application extends android.app.Application {
 
         // Create global configuration and initialize ImageLoader with this config
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this).
-                threadPoolSize(5)
+                threadPoolSize(10)
                 .defaultDisplayImageOptions(options)
                 .build();
         ImageLoader.getInstance().init(config);

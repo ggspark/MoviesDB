@@ -108,6 +108,10 @@ public class MovieListingActivity extends BaseActivity implements ActionBar.TabL
                 if (swipeRefreshLayout.isRefreshing()) {
                     swipeRefreshLayout.setRefreshing(false);
                 }
+
+                for(int i=2; i<=nowPlaying.getTotalPages();i++){
+                    loadPage(i);
+                }
             }
 
             @Override
@@ -119,7 +123,21 @@ public class MovieListingActivity extends BaseActivity implements ActionBar.TabL
                 }
             }
         });
+    }
 
+    synchronized void loadPage(int number){
+        APIServices.getMovieService().getNowPlaying(Constant.API_KEY, number, new Callback<NowPlaying>() {
+            @Override
+            public void success(NowPlaying nowPlaying, Response response) {
+                DataSingleton.getInstance().getNowPlayingMovies().addAll(nowPlaying.getResults());
+                FragmentSection1.getInstance().notifyDataSetChanged();
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                error.printStackTrace();
+            }
+        });
     }
 
     // Implemented from ActionBar.TabListener
