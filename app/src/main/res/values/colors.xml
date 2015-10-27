@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+
+    <!-- Color pallet teal and orange http://www.materialpalette.com/ -->
+    <color name="primary">#607D8B</color>
+    <color name="primary_dark">#455A64</color>
+    <color name="primary_light">#CFD8DC</color>
+    <color name="accent">#4CAF50</color>
+    <color name="primary_text">#212121</color>
+    <color name="secondary_text">#727272</color>
+    <color name="icons">#FFFFFF</color>
+    <color name="divider">#B6B6B6</color>
+
+    <!-- Generic colors in the app-->
+    <color name="white">#FFF</color>
+    <color name="blue_editable">#0000EE</color>
+
+
+
+    <color name="color_grid_view_bg">@color/divider</color>
+
+</resources>
