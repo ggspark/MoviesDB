@@ -11,7 +11,7 @@ import java.util.List;
  * @since 27/Oct/2015
  */
 
-public class NowPlaying {
+public class Movie {
 
     @SerializedName("dates")
     @Expose

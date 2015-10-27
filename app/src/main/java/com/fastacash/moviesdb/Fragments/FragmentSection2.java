@@ -4,6 +4,7 @@ package com.fastacash.moviesdb.Fragments;
  * Created by gaurav on 18/11/14.
  */
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,11 +13,17 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
+import com.fastacash.moviesdb.Activities.MovieDetailsActivity;
 import com.fastacash.moviesdb.Activities.MovieListingActivity;
 import com.fastacash.moviesdb.Adapters.MovieAdapter;
 import com.fastacash.moviesdb.DataSingleton;
 import com.fastacash.moviesdb.R;
+import com.fastacash.moviesdb.models.Result;
+import com.fastacash.moviesdb.utils.Constant;
+import com.google.gson.Gson;
 import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
+
+import java.util.List;
 
 
 public class FragmentSection2 extends BaseFragment {
@@ -25,6 +32,8 @@ public class FragmentSection2 extends BaseFragment {
     private static View rootView;
     private GridView gridView;
     private MovieAdapter movieAdapter;
+
+    private List<Result> dataset;
 
     public static FragmentSection2 getInstance() {
         return instance;
@@ -35,7 +44,8 @@ public class FragmentSection2 extends BaseFragment {
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_section_1, container, false);
         fillUi(rootView);
-        movieAdapter = new MovieAdapter(getActivity(), DataSingleton.getInstance().getNowPlayingMovies());
+        dataset = DataSingleton.getInstance().getNowPlayingMovies();
+        movieAdapter = new MovieAdapter(getActivity(), dataset);
         SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(movieAdapter);
         swingBottomInAnimationAdapter.setAbsListView(gridView);
 
@@ -44,6 +54,12 @@ public class FragmentSection2 extends BaseFragment {
         gridView.setAdapter(swingBottomInAnimationAdapter);
 
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        notifyDataSetChanged();
     }
 
     private void fillUi(View rootView) {
@@ -69,7 +85,9 @@ public class FragmentSection2 extends BaseFragment {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+                Intent intent = new Intent(getActivity(), MovieDetailsActivity.class);
+                intent.putExtra(Constant.MOVIE, (new Gson()).toJson(dataset.get(position)));
+                startActivity(intent);
             }
         });
     }

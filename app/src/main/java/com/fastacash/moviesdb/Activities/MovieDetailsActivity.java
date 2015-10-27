@@ -10,14 +10,21 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.fastacash.moviesdb.Adapters.MovieAdapter;
-import com.fastacash.moviesdb.DataSingleton;
 import com.fastacash.moviesdb.R;
+import com.fastacash.moviesdb.controller.APIServices;
+import com.fastacash.moviesdb.models.Movie;
 import com.fastacash.moviesdb.models.Result;
 import com.fastacash.moviesdb.utils.Constant;
+import com.google.gson.Gson;
 import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class MovieDetailsActivity extends BaseActivity {
 
@@ -30,12 +37,8 @@ public class MovieDetailsActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_details);
-        int pos = getIntent().getIntExtra(Constant.MOVIE, -1);
-        Result movie = new Result();
-        if(pos>=0){
-            movie = DataSingleton.getInstance().getNowPlayingMovies().get(pos);
-        }
-
+        String res = getIntent().getStringExtra(Constant.MOVIE);
+        Result movie = (new Gson()).fromJson(res, Result.class);
 
         ImageView backdrop = (ImageView) findViewById(R.id.backdrop);
         ImageView poster = (ImageView) findViewById(R.id.poster);
@@ -50,8 +53,9 @@ public class MovieDetailsActivity extends BaseActivity {
         overview.setText(movie.getOverview());
 
         fillUi();
-        dataset = DataSingleton.getInstance().getNowPlayingMovies();
+        dataset = new ArrayList<Result>();
         movieAdapter = new MovieAdapter(this, dataset);
+        queryServer(movie.getId());
         SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(movieAdapter);
         swingBottomInAnimationAdapter.setAbsListView(gridView);
 
@@ -69,9 +73,48 @@ public class MovieDetailsActivity extends BaseActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(MovieDetailsActivity.this, MovieDetailsActivity.class);
-                intent.putExtra(Constant.MOVIE, position);
+                intent.putExtra(Constant.MOVIE, (new Gson()).toJson(dataset.get(position)));
                 startActivity(intent);
             }
         });
     }
+
+    synchronized void queryServer(final int id) {
+        loadingDialog.show();
+        APIServices.getMovieService().getSimilar(id, Constant.API_KEY, 1, new Callback<Movie>() {
+            @Override
+            public void success(Movie movie, Response response) {
+                dataset.clear();
+                dataset.addAll(movie.getResults());
+                movieAdapter.notifyDataSetChanged();
+                loadingDialog.dismiss();
+                for (int i = 2; i <= movie.getTotalPages(); i++) {
+                    loadPage(i, id);
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                error.printStackTrace();
+                loadingDialog.dismiss();
+            }
+        });
+    }
+
+
+    synchronized void loadPage(int number, final int id) {
+        APIServices.getMovieService().getSimilar(id, Constant.API_KEY, number, new Callback<Movie>() {
+            @Override
+            public void success(Movie movie, Response response) {
+                dataset.addAll(movie.getResults());
+                movieAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                error.printStackTrace();
+            }
+        });
+    }
+
 }

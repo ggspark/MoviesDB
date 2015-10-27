@@ -15,7 +15,7 @@ import com.fastacash.moviesdb.Fragments.FragmentSection1;
 import com.fastacash.moviesdb.Fragments.FragmentSection2;
 import com.fastacash.moviesdb.R;
 import com.fastacash.moviesdb.controller.APIServices;
-import com.fastacash.moviesdb.models.NowPlaying;
+import com.fastacash.moviesdb.models.Movie;
 import com.fastacash.moviesdb.utils.Constant;
 import com.fastacash.moviesdb.utils.QLog;
 
@@ -94,18 +94,18 @@ public class MovieListingActivity extends BaseActivity implements ActionBar.TabL
 
     synchronized void queryServer() {
         swipeRefreshLayout.setRefreshing(true);
-        APIServices.getMovieService().getNowPlaying(Constant.API_KEY, 1, new Callback<NowPlaying>() {
+        APIServices.getMovieService().getNowPlaying(Constant.API_KEY, 1, new Callback<Movie>() {
             @Override
-            public void success(NowPlaying nowPlaying, Response response) {
+            public void success(Movie movie, Response response) {
                 DataSingleton.getInstance().getNowPlayingMovies().clear();
-                DataSingleton.getInstance().getNowPlayingMovies().addAll(nowPlaying.getResults());
+                DataSingleton.getInstance().getNowPlayingMovies().addAll(movie.getResults());
                 FragmentSection1.getInstance().notifyDataSetChanged();
                 // Stop the refreshing indicator
                 if (swipeRefreshLayout.isRefreshing()) {
                     swipeRefreshLayout.setRefreshing(false);
                 }
 
-                for(int i=2; i<=nowPlaying.getTotalPages();i++){
+                for(int i=2; i<= movie.getTotalPages();i++){
                     loadPage(i);
                 }
             }
@@ -122,10 +122,10 @@ public class MovieListingActivity extends BaseActivity implements ActionBar.TabL
     }
 
     synchronized void loadPage(int number){
-        APIServices.getMovieService().getNowPlaying(Constant.API_KEY, number, new Callback<NowPlaying>() {
+        APIServices.getMovieService().getNowPlaying(Constant.API_KEY, number, new Callback<Movie>() {
             @Override
-            public void success(NowPlaying nowPlaying, Response response) {
-                DataSingleton.getInstance().getNowPlayingMovies().addAll(nowPlaying.getResults());
+            public void success(Movie movie, Response response) {
+                DataSingleton.getInstance().getNowPlayingMovies().addAll(movie.getResults());
                 FragmentSection1.getInstance().notifyDataSetChanged();
             }
 

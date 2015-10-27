@@ -20,6 +20,7 @@ import com.fastacash.moviesdb.DataSingleton;
 import com.fastacash.moviesdb.R;
 import com.fastacash.moviesdb.models.Result;
 import com.fastacash.moviesdb.utils.Constant;
+import com.google.gson.Gson;
 import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
 
 import java.util.List;
@@ -79,7 +80,7 @@ public class FragmentSection1 extends BaseFragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getActivity(), MovieDetailsActivity.class);
-                intent.putExtra(Constant.MOVIE, position);
+                intent.putExtra(Constant.MOVIE, (new Gson()).toJson(dataset.get(position)));
                 startActivity(intent);
             }
         });

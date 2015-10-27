@@ -1,11 +1,12 @@
 package com.fastacash.moviesdb.controller;
 
 
-import com.fastacash.moviesdb.models.NowPlaying;
+import com.fastacash.moviesdb.models.Movie;
 
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.http.GET;
+import retrofit.http.Path;
 import retrofit.http.Query;
 
 /**
@@ -24,7 +25,10 @@ public class APIServices {
     //Create a service interface to query API
     public interface Movies {
         @GET("/movie/now_playing")
-        void getNowPlaying(@Query("api_key") String key, @Query("page") int page, Callback<NowPlaying> cb);
+        void getNowPlaying(@Query("api_key") String key, @Query("page") int page, Callback<Movie> cb);
+
+        @GET("/movie/{id}/similar")
+        void getSimilar(@Path("id") int movieId, @Query("api_key") String key, @Query("page") int page, Callback<Movie> cb);
     }
 
     private static final Movies MOVIE_SERVICE = REST_ADAPTER.create(Movies.class);
