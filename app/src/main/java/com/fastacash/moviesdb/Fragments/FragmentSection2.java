@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.TextView;
 
 import com.fastacash.moviesdb.Activities.MovieDetailsActivity;
 import com.fastacash.moviesdb.Activities.MovieListingActivity;
@@ -36,6 +37,7 @@ public class FragmentSection2 extends BaseFragment {
     private static FragmentSection2 instance = new FragmentSection2();
     private static View rootView;
     private GridView gridView;
+    private TextView empty;
     private MovieAdapter movieAdapter;
 
     private List<Result> dataset;
@@ -81,10 +83,17 @@ public class FragmentSection2 extends BaseFragment {
         super.onResume();
         Realm realm = Realm.getInstance(this.getActivity());
         dataset = realm.where(Result.class).findAll();
+
+        if (dataset.isEmpty()) {
+            empty.setVisibility(View.VISIBLE);
+        } else {
+            empty.setVisibility(View.GONE);
+        }
         notifyDataSetChanged();
     }
 
     private void fillUi(View rootView) {
+        empty = (TextView) rootView.findViewById(R.id.empty);
         gridView = (GridView) rootView.findViewById(R.id.movie_gridview);
 
         gridView.setOnScrollListener(new AbsListView.OnScrollListener() {

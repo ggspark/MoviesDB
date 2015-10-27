@@ -8,6 +8,7 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.fastacash.moviesdb.Adapters.MovieAdapter;
 import com.fastacash.moviesdb.R;
@@ -72,6 +73,8 @@ public class MovieDetailsActivity extends BaseActivity {
                 realm.beginTransaction();
                 realm.copyToRealm(movie);
                 realm.commitTransaction();
+
+                Toast.makeText(MovieDetailsActivity.this, "Movie added to Favourites", Toast.LENGTH_SHORT).show();
             }
         });
 
