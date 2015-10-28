@@ -148,6 +148,7 @@ public class MovieDetailsActivity extends BaseActivity {
             public void failure(RetrofitError error) {
                 error.printStackTrace();
                 loadingDialog.dismiss();
+                Toast.makeText(MovieDetailsActivity.this, "Error loading related movies", Toast.LENGTH_SHORT).show();
             }
         });
     }
