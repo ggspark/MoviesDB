@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_margin="12dp"
-        android:text="No movies available"
+        android:text="No movie available"
         android:textColor="@color/primary_text"
         android:textSize="20dp"
         android:visibility="gone"/>
