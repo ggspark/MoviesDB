@@ -36,8 +36,8 @@ public class MovieListingActivity extends BaseActivity implements ActionBar.TabL
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
         swipeRefreshLayout.setColorSchemeColors(
-                R.color.accent, R.color.primary,
-                R.color.primary_dark);
+                R.color.accent, R.color.yellow,
+                R.color.primary);
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -83,14 +83,11 @@ public class MovieListingActivity extends BaseActivity implements ActionBar.TabL
             ab.addTab(ab.newTab().setText(mAppSectionsPagerAdapter.getPageTitle(i)).setTabListener(this));
         }
 
+        loadingDialog.show();
         queryServer();
 
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
 
     synchronized void queryServer() {
         swipeRefreshLayout.setRefreshing(true);
@@ -101,6 +98,7 @@ public class MovieListingActivity extends BaseActivity implements ActionBar.TabL
                 DataSingleton.getInstance().getNowPlayingMovies().addAll(movie.getResults());
                 FragmentSection1.getInstance().notifyDataSetChanged();
                 // Stop the refreshing indicator
+                loadingDialog.dismiss();
                 if (swipeRefreshLayout.isRefreshing()) {
                     swipeRefreshLayout.setRefreshing(false);
                 }
@@ -114,6 +112,7 @@ public class MovieListingActivity extends BaseActivity implements ActionBar.TabL
             public void failure(RetrofitError error) {
                 error.printStackTrace();
                 // Stop the refreshing indicator
+                loadingDialog.dismiss();
                 if (swipeRefreshLayout.isRefreshing()) {
                     swipeRefreshLayout.setRefreshing(false);
                 }
