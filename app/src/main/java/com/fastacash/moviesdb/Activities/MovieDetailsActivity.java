@@ -72,14 +72,15 @@ public class MovieDetailsActivity extends BaseActivity {
             public void onClick(View v) {
                 Realm realm = Realm.getInstance(MovieDetailsActivity.this);
                 RealmResults<Result> results = realm.where(Result.class).equalTo("id", movie.getId()).findAll();
+                realm.beginTransaction();
                 if(results.isEmpty()) {
-                    realm.beginTransaction();
                     realm.copyToRealm(movie);
-                    realm.commitTransaction();
                     Toast.makeText(MovieDetailsActivity.this, "Movie added to Favourites", Toast.LENGTH_SHORT).show();
                 }else{
-                    Toast.makeText(MovieDetailsActivity.this, "Movie already in Favourites", Toast.LENGTH_SHORT).show();
+                    results.remove(0);
+                    Toast.makeText(MovieDetailsActivity.this, "Movie removed from Favourites", Toast.LENGTH_SHORT).show();
                 }
+                realm.commitTransaction();
             }
         });
 
