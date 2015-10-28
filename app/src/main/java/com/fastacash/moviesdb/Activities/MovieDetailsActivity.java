@@ -1,7 +1,9 @@
 package com.fastacash.moviesdb.Activities;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.AdapterView;
@@ -38,6 +40,8 @@ public class MovieDetailsActivity extends BaseActivity {
     private GridView gridView;
     private MovieAdapter movieAdapter;
     private List<Result> dataset;
+    private Realm realm;
+    private RealmResults<Result> results;
     private static Gson gson = new GsonBuilder()
             .setExclusionStrategies(new ExclusionStrategy() {
                 @Override
@@ -65,22 +69,30 @@ public class MovieDetailsActivity extends BaseActivity {
         TextView title = (TextView) findViewById(R.id.title);
         TextView overview = (TextView) findViewById(R.id.overview);
         overview.setMovementMethod(new ScrollingMovementMethod());
-        View fab = findViewById(R.id.fav_btn);
+        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fav_btn);
+        realm = Realm.getInstance(MovieDetailsActivity.this);
+        results = realm.where(Result.class).equalTo("id", movie.getId()).findAll();
+        if (!results.isEmpty()) {
+            fab.setImageResource(R.drawable.ic_ic_favorite_yellow_24dp);
+        }
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Realm realm = Realm.getInstance(MovieDetailsActivity.this);
-                RealmResults<Result> results = realm.where(Result.class).equalTo("id", movie.getId()).findAll();
+
                 realm.beginTransaction();
-                if(results.isEmpty()) {
+                if (results.isEmpty()) {
                     realm.copyToRealm(movie);
+                    fab.setImageResource(R.drawable.ic_ic_favorite_yellow_24dp);
                     Toast.makeText(MovieDetailsActivity.this, "Movie added to Favourites", Toast.LENGTH_SHORT).show();
-                }else{
+                } else {
                     results.remove(0);
+                    Drawable d = getResources().getDrawable(R.drawable.ic_favorite_white_24dp);
+                    fab.setImageDrawable(d);
                     Toast.makeText(MovieDetailsActivity.this, "Movie removed from Favourites", Toast.LENGTH_SHORT).show();
                 }
                 realm.commitTransaction();
+                results = realm.where(Result.class).equalTo("id", movie.getId()).findAll();
             }
         });
 
